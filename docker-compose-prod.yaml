@@ -1,0 +1,27 @@
+version: '3.1'
+
+services:
+  postgres:
+    image: postgres:latest
+    ports:
+    - "5432:5432"
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secret
+  
+  keycloack:
+    image: quay.io/keycloak/keycloak:latest
+    ports:
+    - "8080:8080"
+    environment:
+      KC_DB: postgres
+      KC_DB_PASSWORD: secret
+      KC_DB_USERNAME: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/postgres
+      KC_PROXY: edge
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: secret
+    depends_on:
+    - postgres
+    command: start --auto-build --hostname=localhost:8081 --hostname-admin=localhost:8082
