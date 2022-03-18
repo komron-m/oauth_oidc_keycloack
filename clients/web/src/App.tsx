@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import axios from "./axios";
+import {AvatarURL, Email, HasRole, PreferredName} from "./auth";
 
 interface Hero {
     id: string
@@ -99,11 +100,11 @@ function Table() {
                                     <i>{h.description}</i>
                                 </td>
                                 <td className="border p-2">
-                                    <button
+                                    {HasRole("rfm-editor") && <button
                                         onClick={(e) => deleteHero(h.id)}
                                         className={"rounded-md text-white bg-red-600 px-1"}>
                                         {"X"}
-                                    </button>
+                                    </button>}
                                 </td>
                             </tr>
                         )
@@ -123,7 +124,17 @@ function App() {
                 <div className="flex-1 w-1/3 p-10">
                     <Table/>
                 </div>
-                <div className="flex-1 w-1/3"/>
+                <div className="flex-1 w-1/3">
+                    <div>
+                        <b>Name: </b><i>{PreferredName()}</i>
+                    </div>
+                    <div>
+                        <b>Email: </b><i>{Email()}</i>
+                    </div>
+                    <div>
+                        <img src={AvatarURL()} alt={"logo"}/>
+                    </div>
+                </div>
             </div>
         </>
     );
