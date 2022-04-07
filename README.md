@@ -1,10 +1,10 @@
 ## Description
 
-```markdown
 This repo created to show some features of keycloak, meet the concepts of OAuth and OpenIDConnect.
+
 Presentation file of [PART I](https://)
+
 Presentation file of [Part II](https://)
-```
 
 ## Getting started
 
