@@ -2,9 +2,8 @@ package main
 
 import (
 	"context"
-	jwtmiddleware "github.com/auth0/go-jwt-middleware/v2"
+	"github.com/auth0/go-jwt-middleware/v2"
 	"github.com/auth0/go-jwt-middleware/v2/validator"
-	"github.com/komron-m/oauth_oidc_keycloack/internal"
 	"log"
 	"net/http"
 	"strings"
@@ -13,7 +12,7 @@ import (
 var (
 	clientID = "finmonitoring"
 	issuer   = "http://localhost:8080/realms/demo"
-	audience = []string{}
+	audience []string
 )
 
 func cors(next http.Handler) http.Handler {
@@ -66,18 +65,20 @@ func main() {
 	mux := http.NewServeMux()
 	handler := &httpHandler{repo: new(dummyRepo)}
 
-	mux.HandleFunc("/create", handler.createHero)
-	mux.HandleFunc("/delete", handler.deleteHero)
-	mux.HandleFunc("/get_all", handler.getAllHeroes)
+	mux.HandleFunc("/create", handler.create)
+	mux.HandleFunc("/delete", handler.delete)
+	mux.HandleFunc("/get_all", handler.getAll)
 
+	// uncomment and apply this -- FOR OpenIdConnect
 	//oidcMid, err := internal.NewOpenIDCMid(issuer, clientID)
 	//if err != nil {
 	//	log.Fatal(err)
 	//}
 
-	oauthMid, err := internal.NewAccessTokenMid(issuer, audience, validator.ES256, new(scopes))
+	// uncomment and apply this + accessControlMid -- FOR OAuth2 and scopes check
+	//oauthMid, err := internal.NewAccessTokenMid(issuer, audience, validator.ES256, new(scopes))
 
-	err = http.ListenAndServe(":4000", cors(oauthMid(accessControlMid(mux))))
+	err := http.ListenAndServe(":4000", cors(mux))
 	if err != nil {
 		log.Fatal("Failed to start server", err)
 		return

@@ -12,20 +12,20 @@ type httpHandler struct {
 	repo *dummyRepo
 }
 
-func (h *httpHandler) createHero(w http.ResponseWriter, r *http.Request) {
-	heroReq := new(hero)
-	if err := h.unmarshal(r, heroReq); err != nil {
+func (h *httpHandler) create(w http.ResponseWriter, r *http.Request) {
+	user := new(user)
+	if err := h.unmarshal(r, user); err != nil {
 		h.handlerError(w, r, err)
 	}
 
-	heroReq.ID = uuid.NewString()
-	if err := h.repo.create(heroReq); err != nil {
+	user.ID = uuid.NewString()
+	if err := h.repo.create(user); err != nil {
 		h.handlerError(w, r, err)
 	}
-	h.marshal(w, heroReq)
+	h.marshal(w, user)
 }
 
-func (h *httpHandler) deleteHero(w http.ResponseWriter, r *http.Request) {
+func (h *httpHandler) delete(w http.ResponseWriter, r *http.Request) {
 	type deleteHeroReq struct {
 		Id string `json:"id"`
 	}
@@ -39,9 +39,8 @@ func (h *httpHandler) deleteHero(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *httpHandler) getAllHeroes(w http.ResponseWriter, _ *http.Request) {
-	heroes := h.repo.getAllHeroes()
-	h.marshal(w, heroes)
+func (h *httpHandler) getAll(w http.ResponseWriter, _ *http.Request) {
+	h.marshal(w, h.repo.getAll())
 }
 
 func (h *httpHandler) unmarshal(r *http.Request, v interface{}) error {
