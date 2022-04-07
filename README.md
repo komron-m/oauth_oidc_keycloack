@@ -1,3 +1,11 @@
+## Description
+
+```markdown
+This repo created to show some features of keycloak, meet the concepts of OAuth and OpenIDConnect.
+Presentation file of [PART I](https://)
+Presentation file of [Part II](https://)
+```
+
 ## Getting started
 
 ```shell
@@ -21,9 +29,3 @@ cd $GOPATH/src/github.com/komron-m/oauth_oidc_keycloack/clients/web
 yarn install
 yarn start
 ```
-
-## Contributing
-
-Pull requests are welcome. For any changes, please open an issue first to discuss what you would like to change.
-
-Please make sure to update tests as appropriate.
