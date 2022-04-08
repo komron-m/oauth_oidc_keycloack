@@ -2,9 +2,9 @@
 
 This repo created to show some features of keycloak, meet the concepts of OAuth and OpenIDConnect.
 
-Presentation file of [Part I](https://)
+Presentation file of [part I](https://github.com/komron-m/oauth_oidc_keycloack/1.pdf)
 
-Presentation file of [Part II](https://)
+Presentation file of [part II](https://github.com/komron-m/oauth_oidc_keycloack/2.pdf)
 
 ## Getting started
 
