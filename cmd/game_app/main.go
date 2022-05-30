@@ -1,12 +1,10 @@
 package main
 
 import (
-	"context"
-	"github.com/auth0/go-jwt-middleware/v2"
 	"github.com/auth0/go-jwt-middleware/v2/validator"
+	"github.com/komron-m/oauth_oidc_keycloack/internal"
 	"log"
 	"net/http"
-	"strings"
 )
 
 var (
@@ -28,39 +26,6 @@ func cors(next http.Handler) http.Handler {
 	})
 }
 
-type scopes struct {
-	Scopes string `json:"scope"`
-}
-
-func (s *scopes) Validate(ctx context.Context) error {
-	return nil
-}
-
-func (s *scopes) HasScope(scope string) bool {
-	givenScopes := strings.Split(s.Scopes, " ")
-	for _, gs := range givenScopes {
-		if gs == scope {
-			return true
-		}
-	}
-	return false
-}
-
-func accessControlMid(next http.Handler) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		token := r.Context().Value(jwtmiddleware.ContextKey{}).(*validator.ValidatedClaims)
-
-		claims, ok := token.CustomClaims.(*scopes)
-		if !ok || !claims.HasScope("openid") {
-			w.WriteHeader(http.StatusForbidden)
-			w.Write([]byte(`{"message":"Insufficient scope."}`))
-			return
-		}
-
-		next.ServeHTTP(w, r)
-	}
-}
-
 func main() {
 	mux := http.NewServeMux()
 	handler := &httpHandler{repo: new(dummyRepo)}
@@ -75,10 +40,13 @@ func main() {
 	//	log.Fatal(err)
 	//}
 
-	// uncomment and apply this + accessControlMid -- FOR OAuth2 and scopes check
-	//oauthMid, err := internal.NewAccessTokenMid(issuer, audience, validator.ES256, new(scopes))
+	oauthMid, err := internal.NewAccessTokenMid(issuer, audience, validator.ES256, new(internal.Scope))
+	if err != nil {
+		log.Fatal("Failed to start server", err)
+		return
+	}
 
-	err := http.ListenAndServe(":4000", cors(mux))
+	err = http.ListenAndServe(":4000", oauthMid(cors(mux)))
 	if err != nil {
 		log.Fatal("Failed to start server", err)
 		return
