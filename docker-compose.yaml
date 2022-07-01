@@ -2,13 +2,29 @@ version: '3.1'
 
 services:
   keycloak-dev:
-    image: quay.io/keycloak/keycloak:17.0.1
+    image: quay.io/keycloak/keycloak:18.0.0
     ports:
     - "8080:8080"
+    volumes:
+    - ./ext/r.jar:/opt/keycloak/providers/k.jar
     environment:
-      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN: keycloak
       KEYCLOAK_ADMIN_PASSWORD: secret
+      KK_TO_RMQ_URL: rabbitmq
+      KK_TO_RMQ_PORT: 5672
+      KK_TO_RMQ_VHOST: "/"
+      KK_TO_RMQ_EXCHANGE: "keycloak.events"
+      KK_TO_RMQ_USERNAME: rabbitmq
+      KK_TO_RMQ_PASSWORD: secret
     command: start-dev
+  rabbitmq:
+    image: rabbitmq:management
+    ports:
+    - "15672:15672"
+    - "5671:5671"
+    - "5672:5672"
+    volumes:
+    - "./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf"
   openldap:
     image: osixia/openldap:latest
     environment:

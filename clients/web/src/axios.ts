@@ -1,8 +1,8 @@
 import axios from "axios";
-import {GetAccessToken} from "./auth";
+import {GetIDToken} from "./auth";
 
 axios.interceptors.request.use((conf) => {
-    conf.headers!["Authorization"] = `Bearer ${GetAccessToken()}`
+    conf.headers!["Authorization"] = `Bearer ${GetIDToken()}`
     return conf
 })
 

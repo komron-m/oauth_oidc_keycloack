@@ -1,8 +1,8 @@
 import Keycloak, {KeycloakConfig, KeycloakInitOptions} from 'keycloak-js'
 
 const host = "http://localhost:8080"
-const clientID = "finmonitoring"
-const realm = "demo"
+const clientID = "client"
+const realm = "realm"
 
 const initConfigs: KeycloakConfig = {
     url: host,
@@ -11,31 +11,30 @@ const initConfigs: KeycloakConfig = {
 }
 
 const initOptions: KeycloakInitOptions = {
-    onLoad: "check-sso",
+    onLoad: "login-required",
     enableLogging: true
 }
 
-const keycloak = Keycloak(initConfigs);
+const keycloak = new Keycloak(initConfigs);
 
 export default function StartApp(renderer: () => void) {
     keycloak.init(initOptions).then(authorized => {
-        if (!authorized) {
-            keycloak.login()
-        } else {
-            renderer()
-
-            setInterval(() => {
-                keycloak.updateToken(60).then((refreshed: any) => {
-                    if (refreshed) {
-                        console.log('Token refreshed' + refreshed);
-                    }
-                }).catch(() => {
-                    console.log('Failed to refresh token');
-                });
-            }, 30000)
+            if (authorized) {
+                setInterval(() => {
+                    keycloak.updateToken(60).then((refreshed: any) => {
+                        if (refreshed) {
+                            console.log('Token refreshed' + refreshed);
+                        }
+                    }).catch(() => {
+                        console.log('Failed to refresh token');
+                    });
+                }, 30000)
+            }
         }
-    }).catch((err) => {
+    ).catch((err) => {
         console.log(err)
+    }).finally(() => {
+        renderer()
     })
 }
 
